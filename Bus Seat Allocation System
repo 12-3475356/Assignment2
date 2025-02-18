@@ -1,0 +1,91 @@
+#include<stdio.h>
+#include<stdlib.h>
+int n,totalseat=10;
+struct bus{
+    int busNum,numofseats[20],age;
+    char root[100],name[100],departureTime[100];
+    unsigned long int phno;
+
+}s;
+
+void bussDetails(){
+    printf("Enter the bus number\n");
+    scanf("%d",&s.busNum);
+    printf("Enter the root\n");
+    scanf("%s",&s.root);
+    printf("Enter the departure time\n");
+    scanf("%s",s.departureTime);
+    printf("Enter the no of seats\n");
+    scanf("%d",&n);
+    for(int i=0;i<n;i++)
+    {     
+          int seatno;
+          printf("Enter seat number %d: ", i + 1);
+          scanf("%d",&seatno);
+          if (s.numofseats[seatno ] == 1) {
+            printf("Seat %d is already taken. Please choose another seat.\n", seatno);
+         }
+         else{
+            s.numofseats[seatno]=1;
+         }
+         
+    }
+    if (totalseat> 10) {
+        printf("Only 20 seats available. Setting to 20.\n");
+        totalseat= 10; // limit the number of seats to 20
+    }
+
+}
+void passengerDetails(){
+    printf("Enter your name\n");
+    scanf("%s",s.name);
+    printf("Enter your age\n");
+    scanf("%d",&s.age);
+    printf("Enter your phno\n");
+    scanf("%lu",&s.phno);
+
+
+}
+void display(){
+    printf("*****buss details******\nbusnum=%d\nroot=%s\ndeparture time=%s\n",s.busNum,s.root,s.departureTime);
+    // for(int i=sizeof(s.numofseats)/sizeof(s.numofseats[0]);i<n;i++){
+    //     printf("%d\n",s.numofseats[i]);
+    // }
+    printf("Seats: ");
+    for (int i = 0; i < totalseat; i++) {
+        printf("%d ", s.numofseats[i]);
+    }
+    printf("\n*****passenger deatils*******\nname=%s\nage=%d\nphno=%lu\n",s.name,s.age,s.phno);
+}
+
+void cancellation(){
+    int cancel;
+    printf("Enter the seat num to cancel\n");
+    scanf("%d",&cancel);
+    if (s.numofseats[cancel] == 0)
+    {printf("Seat %d is already vacant.\n", cancel); }
+    else{
+        s.numofseats[cancel]=0;
+        printf("Seat cancelled successfully!!!\n");
+
+    }
+}
+void main(){
+    int choice;
+    while(1){
+    printf("\n\nEnter the choice\n1)buss details\n2)passenger details\n3)display\n4)seat cancellation\n5)to go out\n");
+    scanf("%d",&choice);
+    if(choice==1)
+    { bussDetails();}
+    if(choice==2)
+    {passengerDetails();}
+    if(choice==3)
+    {display();}
+    if(choice==4)
+    { cancellation();}
+    if(choice==5)
+    { exit(0);}
+    }
+
+}
+
