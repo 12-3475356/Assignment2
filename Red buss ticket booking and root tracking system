@@ -1,0 +1,177 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+
+#define ROUTES 5
+#define MAX_SEATS 30
+
+void bookTicket(int graph[ROUTES][ROUTES], int availabilityG[ROUTES][ROUTES], int availabilityP[ROUTES][ROUTES], char *cities[ROUTES]) {
+    int origin, destination, seatsToBook, bustype, ans;
+    double Gfare, Pfare, travel_time;
+    int ch;
+    char id[50], n[20], bankname[50], ac[20], name[20], date[10]; 
+
+    
+    printf("\nEnter origin city (0 - Delhi, 1 - Mumbai, 2 - Chennai, 3 - Kolkata, 4 - Bangalore): ");
+    scanf("%d", &origin);
+    printf("\nEnter destination city (0 - Delhi, 1 - Mumbai, 2 - Chennai, 3 - Kolkata, 4 - Bangalore): ");
+    scanf("%d", &destination);
+    printf("\nEnter the date: (DD/MM/YYYY)");
+    scanf("%s", &date);
+
+    
+    if (graph[origin][destination] == 0) {
+        printf("\nSorry, there is no direct bus route between %s and %s.\n", cities[origin], cities[destination]);
+        return;
+    }
+
+    
+    if (availabilityG[origin][destination] == 0 && availabilityP[origin][destination]==0) {
+        printf("\nSorry, there are no available seats on the bus from %s to %s.\n", cities[origin], cities[destination]);
+        return;
+    }
+
+    
+    Pfare = graph[origin][destination] * 10;
+    Gfare = graph[origin][destination] * 8;
+    travel_time = graph[origin][destination] * 1.2;
+    
+    
+    printf("\nThe distance from %s to %s is %d km.\n", cities[origin], cities[destination], graph[origin][destination]);
+    printf("\nEnter prefered Bus type: 0- Govt Bus\t\t 1- Private Bus\n ");
+    scanf("%d",&bustype);
+    printf("\nEnter the number of seats you want to book: ");
+    scanf("%d", &seatsToBook);
+
+   
+    if(bustype==0){
+    
+    if (seatsToBook > availabilityG[origin][destination]) {
+        printf("\nSorry, only %d seats are available. You can book a maximum of %d seats.\n", availabilityG[origin][destination], availabilityG[origin][destination]);
+        return;
+    }
+    
+    availabilityG[origin][destination] -= seatsToBook;  
+    double GtotalFare = Gfare * seatsToBook;
+    printf("\n%d seats from %s to %s. Total fare: Rs. %.2f\n Proceed to payment? 0-No\t\t1-Yes", seatsToBook, cities[origin], cities[destination], GtotalFare);
+    scanf("%d", &ans);
+    }
+    
+    if(bustype==1){
+    
+    if (seatsToBook > availabilityP[origin][destination]) {
+        printf("\nSorry, only %d seats are available. You can book a maximum of %d seats.\n", availabilityP[origin][destination], availabilityP[origin][destination]);
+        return;
+    }
+   
+    availabilityP[origin][destination] -= seatsToBook;  
+    double PtotalFare = Pfare * seatsToBook;
+    printf("\n%d seats from %s to %s. Total fare: Rs. %.2f\n Travel Time: %.2f minutes\n Proceed to payment? 0-No\t\t1-Yes", seatsToBook, cities[origin], cities[destination], PtotalFare, travel_time);
+    scanf("%d", &ans);
+     
+    if(ans==0){
+        exit(0);
+    }
+    if(ans==1){
+    printf("\n1. Credit/Debit card\t2. UPI\t3. Net Banking\nEnter your payment method: ");
+    scanf("%d", &ch);
+    switch (ch) {
+        case 1:
+            printf("Enter 16 digit credit card number: \n");
+            printf("Enter Your name:\n");
+            scanf("%s", n);
+            if (strlen(n) == 16) {
+                printf("Payment Successful\n");
+                printf("Your ticket from %s to %s on %s has been booked under the name: %s\n",cities[origin], cities[destination], date, name );
+            } else {
+                printf("Invalid credit card number\n");
+            }
+            break;
+        case 2:
+            printf("Enter a valid UPI ID (e.g., user@upi): ");
+            printf("Enter Your name:\n");
+            scanf("%s", id);
+            if (strchr(id, '@') != NULL) {
+                printf("Payment Successful\n");
+                printf("Your ticket from %s to %s on %s has been booked under the name: %s\n",cities[origin], cities[destination], date, name );
+            } else {
+                printf("Please enter a valid UPI ID\n");
+            }
+            break;
+        case 3:
+            printf("Enter your Bank name: ");
+            printf("Enter Your name:\n");
+            scanf("%s", bankname);
+            printf("Enter account number: ");
+            scanf("%s", ac); 
+            printf("Payment Successful\n");
+            printf("Your ticket from %s to %s on %s has been booked under the name: %s\n",cities[origin], cities[destination],date, name );
+            break;
+        default:
+            printf("Invalid payment method\n");
+            exit(0);
+        }
+    }
+}
+
+    
+    
+}
+
+
+
+int main() {
+    // Cities in India 
+    char *cities[ROUTES] = {
+        "Delhi", "Mumbai", "Chennai", "Kolkata", "Bangalore"
+    };
+
+   
+    int graph[ROUTES][ROUTES] = {
+        {0, 1400, 2200, 1500, 2400},  // Delhi
+        {1400, 0, 1300, 2000, 1000},  // Mumbai
+        {2200, 1300, 0, 1700, 350},   // Chennai
+        {1500, 2000, 1700, 0, 1900},  // Kolkata
+        {2400, 1000, 350, 1900, 0}    // Bangalore
+    };
+
+    
+    int availabilityG[ROUTES][ROUTES] = {
+        {0, 10, 15, 10, 5},  // Delhi
+        {10, 0, 20, 5, 10},  // Mumbai
+        {15, 20, 0, 25, 30}, // Chennai
+        {10, 5, 25, 0, 15},  // Kolkata
+        {5, 10, 30, 15, 0}   // Bangalore
+    };
+     
+     int availabilityP[ROUTES][ROUTES] = {
+        {0, 20, 34, 10, 6},   // Delhi
+        {24, 0, 20, 17, 23},  // Mumbai
+        {13, 10, 0, 25, 30},  // Chennai
+        {10, 19, 25, 0, 35},  // Kolkata
+        {25, 16, 20, 15, 0}   // Bangalore
+    };
+
+    int choice;
+    while (1) {
+        // Display menu
+        printf("\nBus Ticket Booking System\n1. Book a bus ticket\n2. Exit\nEnter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                bookTicket(graph, availabilityG, availabilityP, cities);
+                break;
+            case 2:
+                printf("Exiting the system. Have a great day!\n");
+                return 0;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    }
+
+    return 0;
+}
+
